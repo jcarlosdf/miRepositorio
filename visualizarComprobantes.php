@@ -1,6 +1,6 @@
 <?php
 
-$ruta = glob("xml2020/*.xml");
+$ruta = glob("attachments1/*.xml");
 
 
 foreach ($ruta as $xml) {
