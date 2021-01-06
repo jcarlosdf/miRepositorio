@@ -1,6 +1,6 @@
 <?php
 
-$ruta = glob("attachments1/*.xml");
+$ruta = glob("attachment/*.xml");
 
 
 foreach ($ruta as $xml) {
@@ -54,8 +54,8 @@ elseif(isset($xmlComp->xpath("//comprobante")[0])) :
     $path = "//comprobante";
     $fact = $xmlComp->xpath($path)[0]; // devuelve un array
     $htmlencode = htmlentities($fact); // devuelve string
-		$htmldecode = html_entity_decode($htmlencode); // devuelve string
-  	$comprobante = json_decode(json_encode(simplexml_load_string(trim($htmldecode))), true);
+	$htmldecode = html_entity_decode($htmlencode); // devuelve string
+  	$comprobante = json_decode(json_encode(simplexml_load_string(trim(str_replace(array("<![CDATA[", "]]>"), "", $htmldecode)))), true);
 
 	// $xml = simplexml_load_file($ruta, "SimpleXMLElement", LIBXML_NOCDATA);
 	// $json = json_encode($xml);
@@ -192,11 +192,11 @@ if(array_key_exists("0", $detalles)){
 			if ($tipoComp == "factura" || $tipoComp == "nota de credito") {
 				if (empty($items['codigoAuxiliar']) || empty($items['codigoAdicional'])) {
 
-					foreach ($items as $key => $value) {
+					foreach ($items2 as $key => $value) {
 						$items2 += [$key => $value];
 						if ($key == "codigoPrincipal" || $key == "codigoInterno") {
 							$items2 += ["codigoAuxiliar" => "NULL"];
-							echo "se agrego codigoAuxiliar</br>";
+							// echo "se agrego codigoAuxiliar</br>";
 						}
 					}
 				}
@@ -206,15 +206,18 @@ if(array_key_exists("0", $detalles)){
 			if($tipoComp == "guia de remision") {
 				if (empty($items['codigoAdicional'])) {
 
-					foreach ($items as $key => $value) {
+					foreach ($items2 as $key => $value) {
 						$items2 += [$key => $value];
 						if ($key == "codigoInterno") {
 							$items2 += ["codigoAdicional" => "NULL"];
-							echo "se agrego codigoAdicional</br>";
+							// echo "se agrego codigoAdicional</br>";
 						}
 					}
+					// print($items2);
 				}
 			}
+
+
 		// Imprime las cabeceras de los detalles
 		if($i == 0){
 			$table .= "<tr>";
@@ -252,6 +255,9 @@ if(array_key_exists("0", $detalles)){
 		endif;
 
 		$table .= "</tr>";
+
+		unset($items);
+		unset($items2);
 
 		}
 
